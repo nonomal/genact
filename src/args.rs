@@ -1,5 +1,5 @@
 #[cfg(not(target_arch = "wasm32"))]
-use clap::Parser;
+use clap::{builder::PossibleValuesParser, Parser};
 
 use crate::modules::ALL_MODULES;
 
@@ -30,20 +30,32 @@ pub struct AppConfig {
     pub list_modules_and_exit: bool,
 
     /// Run only these modules
-    #[clap(short, long, possible_values = ALL_MODULES.keys().cloned().collect::<Vec<_>>())]
+    #[clap(short, long, value_parser = PossibleValuesParser::new(&ALL_MODULES.keys().cloned().collect::<Vec<_>>()))]
     pub modules: Vec<String>,
 
     /// Global speed factor
-    #[clap(short, long, default_value = "1", parse(try_from_str = parse_speed_factor))]
+    #[clap(short, long, default_value = "1", value_parser = parse_speed_factor)]
     pub speed_factor: f32,
 
+    /// Instantly print this many lines
+    #[clap(short, long = "instant-print-lines", default_value = "0")]
+    pub instant_print_lines: u32,
+
     /// Exit after running for this long (format example: 2h10min)
-    #[clap(long, parse(try_from_str = humantime::parse_duration))]
+    #[clap(long, value_parser = humantime::parse_duration)]
     pub exit_after_time: Option<instant::Duration>,
 
     /// Exit after running this many modules
-    #[clap(long, parse(try_from_str = parse_min_1))]
+    #[clap(long, value_parser = parse_min_1)]
     pub exit_after_modules: Option<u32>,
+
+    /// Generate completion file for a shell
+    #[clap(long = "print-completions", value_name = "shell")]
+    pub print_completions: Option<clap_complete::Shell>,
+
+    /// Generate man page
+    #[clap(long = "print-manpage")]
+    pub print_manpage: bool,
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -53,6 +65,9 @@ pub struct AppConfig {
 
     /// Global speed factor
     pub speed_factor: f32,
+
+    /// Instantly print this many lines
+    pub instant_print_lines: u32,
 }
 
 impl AppConfig {
@@ -114,6 +129,11 @@ pub fn parse_args() -> AppConfig {
         .map(|(_, v)| v.parse::<f32>().unwrap_or(1.0))
         .unwrap_or(1.0);
 
+    let instant_print_lines: u32 = pairs
+        .find(|&(ref k, _)| k == "instant-print-lines")
+        .map(|(_, v)| v.parse::<u32>().unwrap_or(0))
+        .unwrap_or(0);
+
     let modules_to_run = if temp_modules.is_empty() {
         ALL_MODULES.keys().map(|m| m.to_string()).collect()
     } else {
@@ -123,5 +143,6 @@ pub fn parse_args() -> AppConfig {
     AppConfig {
         modules: modules_to_run,
         speed_factor,
+        instant_print_lines,
     }
 }

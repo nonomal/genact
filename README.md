@@ -1,7 +1,7 @@
 # genact - a nonsense activity generator
 
 [![CI](https://github.com/svenstaro/genact/workflows/CI/badge.svg)](https://github.com/svenstaro/genact/actions)
-[![DockerHub](https://img.shields.io/docker/cloud/build/svenstaro/genact.svg?style=flat)](https://cloud.docker.com/repository/docker/svenstaro/genact)
+[![Docker Hub](https://img.shields.io/docker/pulls/svenstaro/genact)](https://cloud.docker.com/repository/docker/svenstaro/genact/)
 [![Crates.io](https://img.shields.io/crates/v/genact.svg)](https://crates.io/crates/genact)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/svenstaro/genact/blob/master/LICENSE)
 [![Stars](https://img.shields.io/github/stars/svenstaro/genact.svg)](https://github.com/svenstaro/genact/stargazers)
@@ -19,7 +19,7 @@
 
 You don't have to install anything! For your convenience, prebuilt binaries for Linux, OSX and Windows are provided [here](https://github.com/svenstaro/genact/releases) that should run without any dependencies. **Additionally, there is a web version at https://svenstaro.github.io/genact/**
 
-It's compatible with FreeBSD, Linux, macOS, Windows 10 (it needs a recent Windows 10 to get ANSI support) and most modern web browsers that support WebAssembly.
+It's compatible with FreeBSD, Linux, macOS, Windows, and most modern web browsers that support WebAssembly.
 
 **On FreeBSD**: You don't have to do anything special here. Just run
 
@@ -71,22 +71,23 @@ or (on Docker)
 
 ### Usage
 
-    genact 0.12.0
-    Sven-Hendrik Haase <svenstaro@gmail.com>
     A nonsense activity generator
 
-    USAGE:
-        genact [OPTIONS]
+    Usage: genact [OPTIONS]
 
-    OPTIONS:
-            --exit-after-modules <EXIT_AFTER_MODULES>    Exit after running this many modules
-            --exit-after-time <EXIT_AFTER_TIME>          Exit after running for this long (format example: 2h10min)
-        -h, --help                                       Print help information
-        -l, --list-modules                               List available modules
-        -m, --modules <MODULES>                          Run only these modules [possible values: weblog, mkinitcpio, simcity, memdump, composer, ansible, bootlog, docker_build, download, botnet,
-                                                         kernel_compile, cargo, cc, docker_image_rm, cryptomining]
-        -s, --speed-factor <SPEED_FACTOR>                Global speed factor [default: 1]
-        -V, --version                                    Print version information
+    Options:
+      -l, --list-modules                               List available modules
+      -m, --modules <MODULES>                          Run only these modules [possible values: ansible, bootlog, botnet, bruteforce, cargo, cc,
+                                                       composer, cryptomining, docker_build, docker_image_rm, download, julia, kernel_compile, memdump,
+                                                       mkinitcpio, rkhunter, simcity, terraform, weblog]
+      -s, --speed-factor <SPEED_FACTOR>                Global speed factor [default: 1]
+      -i, --instant-print-lines <INSTANT_PRINT_LINES>  Instantly print this many lines [default: 0]
+          --exit-after-time <EXIT_AFTER_TIME>          Exit after running for this long (format example: 2h10min)
+          --exit-after-modules <EXIT_AFTER_MODULES>    Exit after running this many modules
+          --print-completions <shell>                  Generate completion file for a shell [possible values: bash, elvish, fish, powershell, zsh]
+          --print-manpage                              Generate man page
+      -h, --help                                       Print help
+      -V, --version                                    Print version
 
 ### Web usage
 
@@ -111,8 +112,7 @@ Then, just clone it like usual and `cargo run` to get output:
 This is mostly a note for me on how to release this thing:
 
 - Make sure `CHANGELOG.md` is up to date.
-- `cargo release --dry-run`
-- `cargo release`
-- Releases will automatically be deployed by Github Actions.
-- Docker images will automatically be built by Docker Hub.
+- `cargo release <version>`
+- `cargo release --execute <version>`
+- Releases will automatically be deployed by GitHub Actions.
 - Update Arch package.
